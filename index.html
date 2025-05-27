@@ -1,9 +1,9 @@
 <!doctype html>
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>eSpeak-ng.js CDN - Browser Text-to-Speech</title>
+    <title>eSpeak-ng.js - Enhanced Browser Text-to-Speech</title>
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -18,22 +18,6 @@
         border-bottom: 2px solid #3498db;
         padding-bottom: 10px;
       }
-      h2 {
-        color: #34495e;
-        margin-top: 30px;
-      }
-      .demo-section {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
-        margin: 20px 0;
-      }
-      .info-box {
-        background: #e3f2fd;
-        padding: 15px;
-        border-left: 4px solid #2196f3;
-        margin: 15px 0;
-      }
       pre {
         background: #f4f4f4;
         padding: 15px;
@@ -44,162 +28,154 @@
         background: #f4f4f4;
         padding: 2px 4px;
         border-radius: 3px;
-        font-family: "Consolas", "Monaco", monospace;
+        font-family: monospace;
       }
-      .buttons {
-        margin: 20px 0;
+      .demo-buttons {
+        margin: 30px 0;
       }
-      .buttons a {
+      .demo-buttons a {
         display: inline-block;
-        padding: 10px 20px;
+        padding: 12px 24px;
         margin-right: 10px;
+        margin-bottom: 10px;
         background: #3498db;
         color: white;
         text-decoration: none;
         border-radius: 4px;
-        transition: background 0.3s;
       }
-      .buttons a:hover {
+      .demo-buttons a:hover {
         background: #2980b9;
       }
+      .demo-buttons a.secondary {
+        background: #6c757d;
+      }
+      .demo-buttons a.secondary:hover {
+        background: #545b62;
+      }
       .features {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        display: flex;
         gap: 20px;
         margin: 20px 0;
+        flex-wrap: wrap;
       }
       .feature {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
+        flex: 1;
+        min-width: 200px;
+        text-align: center;
       }
-      .feature h3 {
+      .highlight {
+        background: #e3f2fd;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .enhancement-list {
+        background: #f0f8ff;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .enhancement-list h3 {
         margin-top: 0;
-        color: #495057;
+        color: #1976d2;
+      }
+      .enhancement-list ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .enhancement-list li {
+        margin-bottom: 5px;
       }
     </style>
   </head>
   <body>
-    <h1>eSpeak-ng.js CDN</h1>
+    <h1>eSpeak-ng.js</h1>
     
-    <div class="info-box">
-      <strong>Client-side text-to-speech in any browser!</strong><br>
-      JavaScript port of eSpeak-ng via Emscripten. No server required - runs entirely in the browser using Web Workers and Web Audio API.
-    </div>
+    <p><strong>Advanced browser text-to-speech with professional audio enhancement. No servers, no APIs, just JavaScript.</strong></p>
 
     <div class="features">
       <div class="feature">
         <h3>🎯 Pure JavaScript</h3>
-        <p>No dependencies, no frameworks. Works with vanilla JS or any library.</p>
+        <p>Vanilla JS, no dependencies</p>
+      </div>
+      <div class="feature">
+        <h3>🔊 Studio Quality</h3>
+        <p>Professional audio processing</p>
       </div>
       <div class="feature">
         <h3>🌍 100+ Languages</h3>
-        <p>Includes voices for over 100 languages and accents (3.2MB total).</p>
+        <p>en-us default voice</p>
       </div>
       <div class="feature">
-        <h3>⚡ Fast & Offline</h3>
-        <p>Runs locally in the browser. No API keys or network requests needed.</p>
+        <h3>⚡ Runs Offline</h3>
+        <p>Everything in browser</p>
       </div>
+    </div>
+
+    <div class="enhancement-list">
+      <h3>🎚️ Advanced Audio Enhancement (Default On)</h3>
+      <ul>
+        <li><strong>Pre-emphasis Filter</strong> - Boosts speech clarity</li>
+        <li><strong>Noise Gate</strong> - Removes background noise</li>
+        <li><strong>Spectral Enhancement</strong> - Richer, fuller sound</li>
+        <li><strong>De-esser</strong> - Reduces harsh 's' sounds</li>
+        <li><strong>Dynamic Compression</strong> - Consistent volume levels</li>
+        <li><strong>Intelligent Normalization</strong> - Optimal loudness</li>
+      </ul>
     </div>
 
     <h2>Quick Start</h2>
-    
-    <h3>Option 1: Simple API (Recommended)</h3>
-    <pre><code>&lt;!-- Include the simple wrapper --&gt;
-&lt;script src="https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng-simple.js"&gt;&lt;/script&gt;
+    <pre><code>// Enhanced audio by default
+const tts = new SimpleTTS();
 
-&lt;script&gt;
-// Initialize TTS
-const tts = new SimpleTTS({
-  workerPath: 'https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng.worker.js'
-});
-
-// Wait for initialization
-tts.onReady(function() {
-  // Generate speech audio data
-  tts.speak('Hello world!', function(audioData) {
-    // audioData is a Float32Array - use your own audio player
-    playAudio(audioData);
+// Speak with studio-quality audio
+tts.onReady(() => {
+  tts.speak('Hello world!', audioData => {
+    SimpleTTS.playAudioData(audioData);
   });
-  
-  // With options
-  tts.speak('Hello world!', {
-    voice: 'en',
-    rate: 200,
-    pitch: 75
-  }, function(audioData) {
-    // Handle audio data
-  });
-});
-&lt;/script&gt;</code></pre>
+});</code></pre>
 
-    <h3>Option 2: Original API</h3>
-    <pre><code>&lt;!-- Include the original library --&gt;
-&lt;script src="https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng.min.js"&gt;&lt;/script&gt;
-
-&lt;script&gt;
-const tts = new eSpeakNG('path/to/espeakng.worker.js', function() {
-  // Ready to use
-  tts.synthesize('Hello world!', function(samples, events) {
-    if (samples) {
-      // Handle audio chunks
-    }
-  });
-});
-&lt;/script&gt;</code></pre>
-
-    <h2>Required Files</h2>
-    <p>You need these files (served from same origin or with proper CORS headers):</p>
-    <ul>
-      <li><code>espeakng-simple.js</code> or <code>espeakng.min.js</code> - Main library</li>
-      <li><code>espeakng.worker.js</code> - Web Worker script</li>
-      <li><code>espeakng.worker.data</code> - Voice data (must be in same directory as worker)</li>
-    </ul>
-
-    <h2>CDN URLs</h2>
-    <pre><code># Latest version
-https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng-simple.js
-https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng.worker.js
-https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng.worker.data
-
-# Specific version (1.49.1)
-https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@1.49.1/js/espeakng.min.js
-https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@1.49.1/js/espeakng.worker.js
-https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@1.49.1/js/espeakng.worker.data</code></pre>
-
-    <div class="demo-section">
-      <h2>Live Demos</h2>
-      <div class="buttons">
-        <a href="simple-demo.html">Simple Demo</a>
-        <a href="demo.min.html">Original Demo</a>
-      </div>
+    <div class="highlight">
+      <strong>New:</strong> Professional audio enhancement pipeline delivers clearer, more natural speech!
     </div>
 
-    <h2>API Reference</h2>
-    
-    <h3>SimpleTTS Methods</h3>
-    <ul>
-      <li><code>new SimpleTTS(options)</code> - Create instance</li>
-      <li><code>onReady(callback)</code> - Called when ready</li>
-      <li><code>getVoices(callback)</code> - Get available voices</li>
-      <li><code>speak(text, [options], callback)</code> - Generate speech
-        <ul>
-          <li><code>options.voice</code> - Voice identifier</li>
-          <li><code>options.rate</code> - Speech rate (80-450)</li>
-          <li><code>options.pitch</code> - Voice pitch (0-100)</li>
-        </ul>
-      </li>
-    </ul>
+    <div class="demo-buttons">
+      <a href="simple-demo.html">Try Demo</a>
+      <a href="compare-demo.html" class="secondary">Compare Audio Quality</a>
+      <a href="https://github.com/steveseguin/espeakng.js-cdn">View on GitHub</a>
+    </div>
 
-    <h2>License</h2>
-    <p>GNU General Public License, Version 3 (GPLv3)</p>
-    
-    <h2>Links</h2>
-    <ul>
-      <li><a href="https://github.com/pettarin/espeakng.js-cdn">This CDN Repository</a></li>
-      <li><a href="https://github.com/espeak-ng/espeak-ng">eSpeak-ng Project</a></li>
-      <li><a href="https://github.com/espeak-ng/espeak-ng/tree/master/emscripten">Original JS Port</a></li>
-    </ul>
+    <h2>Advanced Usage</h2>
+    <pre><code>// Control enhancement
+tts.speak('Hello world!', {
+  voice: 'en-us',     // Voice ID
+  rate: 200,          // Speed (80-450)
+  pitch: 75,          // Pitch (0-100)
+  volume: 1.2,        // Volume (0-2.0)
+  enhance: true       // Audio enhancement (default: true)
+}, audioData => {
+  // Play with optional reverb
+  SimpleTTS.playAudioData(audioData, {
+    reverb: true      // Add warmth
+  });
+});</code></pre>
+
+    <h2>Disable Enhancement (Raw Audio)</h2>
+    <pre><code>// For raw eSpeak-ng output
+const tts = new SimpleTTS({
+  enhanceAudio: false
+});
+
+// Or per-request
+tts.speak('Hello', { enhance: false }, callback);</code></pre>
+
+    <h2>Files Needed</h2>
+    <ol>
+      <li><code>espeakng-simple.js</code> - Enhanced API with audio processing</li>
+      <li><code>espeakng.worker.js</code> - Web Worker</li>
+      <li><code>espeakng.worker.data</code> - Voice data</li>
+    </ol>
+
+    <p><small>License: GPLv3</small></p>
   </body>
 </html>

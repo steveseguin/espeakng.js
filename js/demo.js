@@ -15,8 +15,6 @@
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
 
-/* An audio node that can have audio chunks pushed to it */
-
 function PushAudioNode(context, start_callback, end_callback, buffer_size) {
   this.context = context;
   this.start_callback = start_callback;
@@ -124,21 +122,17 @@ PushAudioNode.prototype.handleEvent = function(evt) {
   }
 }
 
+/* Demo code */
 
-
-/* Code specific to the demo */
-
-var ctx = null; // Initialize on first user interaction
+var ctx = null;
 var tts;
 var pusher;
 var pusher_buffer_size = 4096;
 var chunkID = 0;
 
-// Initialize audio context on user interaction
 function initAudioContext() {
   if (!ctx) {
     ctx = new (window.AudioContext || window.webkitAudioContext)();
-    // Chrome autoplay policy requires resume after user gesture
     if (ctx.state === 'suspended') {
       ctx.resume();
     }
@@ -146,59 +140,29 @@ function initAudioContext() {
 }
 
 function stop() {
-  console.log('Inside stop()');
   if (pusher) {
-    console.log('  Calling pusher.disconnect...');
     pusher.disconnect();
-    console.log('  Calling pusher.disconnect... done');
     pusher = null;
   }
-  console.log('Leaving stop()');
-} // end of stop()
+}
 
 function speak() {
-  console.log('Inside speak()');
-  
-  // Initialize audio context on user interaction
   initAudioContext();
-
-  console.log('  Stopping...');
   stop();
-  console.log('  Stopping... done');
-
-  console.log('  Setting rate...');
+  
   tts.set_rate(Number(document.getElementById('rate').value));
-  console.log('  Setting rate... done');
-  console.log('  Setting pitch...');
   tts.set_pitch(Number(document.getElementById('pitch').value));
-  console.log('  Setting pitch... done');
-  console.log('  Setting voice...');
   tts.set_voice(document.getElementById('voice').value);
-  console.log('  Setting voice... done');
 
   var now = Date.now();
   chunkID = 0;
 
-  console.log('  Creating pusher...');
-  pusher = new PushAudioNode(
-    ctx,
-    function() {
-      //console.log('PushAudioNode started!', ctx.currentTime, pusher.startTime);
-    },
-    function() {
-      //console.log('PushAudioNode ended!', ctx.currentTime - pusher.startTime);
-    },
-    pusher_buffer_size
-  );
+  pusher = new PushAudioNode(ctx);
   pusher.connect(ctx.destination);
-  console.log('  Creating pusher... done');
 
-  // actual synthesis
-  console.log('  Calling synthesize...');
   tts.synthesize(
     document.getElementById('texttospeak').value,
     function cb(samples, events) {
-      //console.log('  Inside synt cb');
       if (!samples) {
         if (pusher) {
           pusher.close();
@@ -206,21 +170,12 @@ function speak() {
         return;
       }
       if (pusher) {
-        //console.log('  Pushing chunk ' + chunkID, Date.now());
         pusher.push(new Float32Array(samples));
         ++chunkID;
       }
-      if (now) {
-        //console.log('  Latency:', Date.now() - now);
-        now = 0;
-      }
-      //console.log('  Leaving synt cb');
-    } // end of function cb
-  ); // end of tts.synthesize()
-  console.log('  Calling synthesize... done');
-
-  console.log('Leaving speak()');
-} // end of speak()
+    }
+  );
+}
 
 function resetPitch() {
   document.getElementById('pitch').value = 50;
@@ -231,42 +186,39 @@ function resetRate() {
 }
 
 function resetVoice() {
-  document.getElementById('default-voice').selected = true;
+  var defaultVoice = document.getElementById('default-voice');
+  if (defaultVoice) {
+    defaultVoice.selected = true;
+  }
 }
 
 function initializeDemo() {
-  console.log('Creating eSpeakNG instance...');
   tts = new eSpeakNG(
     'js/espeakng.worker.js',
-    function cb1() {
-      console.log('Inside cb1');
-      tts.list_voices(
-        function cb2(result) {
-          console.log('Inside cb2');
-          var sel = document.getElementById('voice');
-          var index = 0;
-          for (voice of result) {
-            var opt = document.createElement('option');
-            var languages = voice.languages.map(function(lang) {
-              return lang.name;
-            }).join(", ");
-            opt.text = voice.name + ' (' + languages + ')';
-            opt.value = voice.identifier;
-            console.log('Adding voice: ' + opt.text);
-            sel.add(opt);
-            if (voice.name === 'english') {
-              opt.id = 'default-voice';
-              opt.selected = true;
-            }
+    function ready() {
+      tts.list_voices(function(voices) {
+        var sel = document.getElementById('voice');
+        var defaultSet = false;
+        
+        for (voice of voices) {
+          var opt = document.createElement('option');
+          var languages = voice.languages.map(function(lang) {
+            return lang.name;
+          }).join(", ");
+          opt.text = voice.name + ' (' + languages + ')';
+          opt.value = voice.identifier;
+          sel.add(opt);
+          
+          // Set en-us as default, or first English voice
+          if (!defaultSet && (voice.identifier === 'en-us' || 
+              voice.identifier.startsWith('en'))) {
+            opt.id = 'default-voice';
+            opt.selected = true;
+            defaultSet = true;
           }
-          console.log('Leaving cb2');
-        } // end of function cb2
-      );
-      console.log('Removing loading class...');
-      document.body.classList.remove('loading');
-      console.log('Removing loading class... done');
-      console.log('Leaving cb1');
-    } // end of function cb1
+        }
+        document.body.classList.remove('loading');
+      });
+    }
   );
-  console.log('Creating eSpeakNG instance... done');
 }

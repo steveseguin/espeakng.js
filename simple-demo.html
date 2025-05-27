@@ -1,29 +1,25 @@
 <!doctype html>
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>eSpeak-ng Simple Demo</title>
+    <title>eSpeak-ng Demo</title>
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         max-width: 600px;
         margin: 0 auto;
         padding: 20px;
-        line-height: 1.6;
       }
       h1 {
         font-size: 24px;
         margin-bottom: 30px;
       }
       .info {
-        background: #f0f0f0;
+        background: #e3f2fd;
         padding: 15px;
         border-radius: 5px;
         margin-bottom: 20px;
-      }
-      .controls {
-        margin: 20px 0;
       }
       label {
         display: block;
@@ -40,13 +36,14 @@
         margin-bottom: 15px;
         border: 1px solid #ddd;
         border-radius: 4px;
+        box-sizing: border-box;
       }
       textarea {
         min-height: 100px;
         font-family: inherit;
       }
       button {
-        background: #007bff;
+        background: #2196f3;
         color: white;
         border: none;
         padding: 10px 20px;
@@ -56,7 +53,7 @@
         margin-right: 10px;
       }
       button:hover {
-        background: #0056b3;
+        background: #1976d2;
       }
       button:disabled {
         background: #ccc;
@@ -68,51 +65,45 @@
         border-radius: 4px;
         display: none;
       }
+      .status.show {
+        display: block;
+      }
       .status.loading {
         background: #fff3cd;
         color: #856404;
-        display: block;
       }
       .status.error {
         background: #f8d7da;
         color: #721c24;
-        display: block;
       }
       .status.success {
         background: #d4edda;
         color: #155724;
-        display: block;
-      }
-      code {
-        background: #f4f4f4;
-        padding: 2px 4px;
-        border-radius: 3px;
       }
     </style>
   </head>
   <body>
-    <h1>eSpeak-ng Simple Demo</h1>
+    <h1>eSpeak-ng Demo</h1>
     
     <div class="info">
-      <p>This is a simplified vanilla JavaScript wrapper for eSpeak-ng that returns audio data without handling playback.</p>
-      <p><strong>Note:</strong> Click any button first to initialize the audio context (required by modern browsers).</p>
+      <strong>Note:</strong> Click any button to initialize audio (required by browsers).
     </div>
 
-    <div class="controls">
-      <label for="text">Text to speak:</label>
-      <textarea id="text">Hello! This is a test of the eSpeak-ng text to speech engine running entirely in your browser.</textarea>
-      
-      <label for="voice">Voice: <span id="voice-value"></span></label>
-      <select id="voice">
-        <option value="">Loading voices...</option>
-      </select>
-      
-      <label for="rate">Rate: <span id="rate-value">175</span></label>
-      <input type="range" id="rate" min="80" max="450" value="175">
-      
-      <label for="pitch">Pitch: <span id="pitch-value">50</span></label>
-      <input type="range" id="pitch" min="0" max="100" value="50">
-    </div>
+    <textarea id="text">Hello! This is a test of the eSpeak-ng text to speech engine running entirely in your browser.</textarea>
+    
+    <label for="voice">Voice:</label>
+    <select id="voice">
+      <option value="">Loading voices...</option>
+    </select>
+    
+    <label for="rate">Rate: <span id="rate-value">175</span></label>
+    <input type="range" id="rate" min="80" max="450" value="175">
+    
+    <label for="pitch">Pitch: <span id="pitch-value">50</span></label>
+    <input type="range" id="pitch" min="0" max="100" value="50">
+    
+    <label for="volume">Volume: <span id="volume-value">100</span>%</label>
+    <input type="range" id="volume" min="0" max="150" value="100">
 
     <div>
       <button id="speak-btn" disabled>Speak</button>
@@ -123,18 +114,15 @@
 
     <script src="js/espeakng-simple.js"></script>
     <script>
-      // Initialize audio context (needs user interaction)
-      let audioContext = null;
       let tts = null;
-      let currentAudioData = null;
 
-      // Get DOM elements
       const speakBtn = document.getElementById('speak-btn');
       const downloadBtn = document.getElementById('download-btn');
       const status = document.getElementById('status');
       const voiceSelect = document.getElementById('voice');
       const rateSlider = document.getElementById('rate');
       const pitchSlider = document.getElementById('pitch');
+      const volumeSlider = document.getElementById('volume');
       const textArea = document.getElementById('text');
 
       // Update displayed values
@@ -144,82 +132,68 @@
       pitchSlider.oninput = function() {
         document.getElementById('pitch-value').textContent = this.value;
       };
+      volumeSlider.oninput = function() {
+        document.getElementById('volume-value').textContent = this.value;
+      };
 
       // Initialize TTS
       function initTTS() {
         showStatus('Loading eSpeak-ng...', 'loading');
         
-        tts = new SimpleTTS();
-        tts.onReady(function() {
-          showStatus('eSpeak-ng loaded successfully!', 'success');
+        tts = new SimpleTTS({
+          defaultVoice: 'en-us',
+          defaultVolume: 1.0
+        });
+        
+        tts.onReady(function(error) {
+          if (error) {
+            showStatus('Failed to load eSpeak-ng', 'error');
+            return;
+          }
+          
+          showStatus('Ready!', 'success');
           speakBtn.disabled = false;
           downloadBtn.disabled = false;
           
           // Load voices
           tts.getVoices(function(voices) {
             voiceSelect.innerHTML = '';
+            let defaultSet = false;
+            
             voices.forEach(function(voice) {
               const option = document.createElement('option');
               option.value = voice.identifier;
               option.textContent = voice.name + ' (' + voice.languages.map(l => l.name).join(', ') + ')';
-              if (voice.name === 'english') {
+              
+              // Set english-us as default
+              if (voice.identifier === 'en-us' || 
+                  (!defaultSet && voice.identifier.startsWith('en'))) {
                 option.selected = true;
+                defaultSet = true;
               }
+              
               voiceSelect.appendChild(option);
             });
           });
         });
       }
 
-      // Initialize audio context on first user interaction
-      function initAudio() {
-        if (!audioContext) {
-          audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          // Chrome requires resume() after user interaction
-          if (audioContext.state === 'suspended') {
-            audioContext.resume();
-          }
-        }
-      }
-
-      // Show status message
+      // Show status
       function showStatus(message, type) {
         status.textContent = message;
-        status.className = 'status ' + type;
+        status.className = 'status show ' + type;
         if (type === 'success') {
-          setTimeout(function() {
-            status.className = 'status';
-          }, 3000);
+          setTimeout(() => status.className = 'status', 3000);
         }
       }
 
-      // Play audio data
-      function playAudioData(audioData) {
-        initAudio();
-        
-        // Create audio buffer
-        const buffer = audioContext.createBuffer(1, audioData.length, audioContext.sampleRate);
-        buffer.getChannelData(0).set(audioData);
-        
-        // Play buffer
-        const source = audioContext.createBufferSource();
-        source.buffer = buffer;
-        source.connect(audioContext.destination);
-        source.start();
-        
-        source.onended = function() {
-          showStatus('Playback finished', 'success');
-        };
-      }
-
-      // Convert Float32Array to WAV
-      function audioDataToWAV(audioData, sampleRate) {
+      // Convert to WAV
+      function audioDataToWAV(audioData, sampleRate = 22050) {
         const length = audioData.length;
         const arrayBuffer = new ArrayBuffer(44 + length * 2);
         const view = new DataView(arrayBuffer);
         
-        // WAV header
-        const writeString = function(offset, string) {
+        const writeString = (offset, string) => {
           for (let i = 0; i < string.length; i++) {
             view.setUint8(offset + i, string.charCodeAt(i));
           }
@@ -239,7 +213,6 @@
         writeString(36, 'data');
         view.setUint32(40, length * 2, true);
         
-        // Convert float32 to int16
         let offset = 44;
         for (let i = 0; i < length; i++) {
           const sample = Math.max(-1, Math.min(1, audioData[i]));
@@ -250,42 +223,57 @@
         return arrayBuffer;
       }
 
-      // Speak button handler
+      // Speak button
       speakBtn.onclick = function() {
-        initAudio();
         showStatus('Generating speech...', 'loading');
         speakBtn.disabled = true;
         
         const options = {
           voice: voiceSelect.value,
           rate: parseInt(rateSlider.value),
-          pitch: parseInt(pitchSlider.value)
+          pitch: parseInt(pitchSlider.value),
+          volume: parseInt(volumeSlider.value) / 100
         };
         
         tts.speak(textArea.value, options, function(audioData) {
-          currentAudioData = audioData;
           speakBtn.disabled = false;
-          showStatus('Playing audio...', 'success');
-          playAudioData(audioData);
+          
+          if (!audioData) {
+            showStatus('Failed to generate speech', 'error');
+            return;
+          }
+          
+          showStatus('Playing...', 'success');
+          
+          // Use built-in playback helper
+          const playback = SimpleTTS.playAudioData(audioData);
+          if (playback) {
+            playback.source.onended = () => showStatus('Finished', 'success');
+          }
         });
       };
 
-      // Download button handler
+      // Download button
       downloadBtn.onclick = function() {
-        showStatus('Generating speech for download...', 'loading');
+        showStatus('Generating...', 'loading');
         downloadBtn.disabled = true;
         
         const options = {
           voice: voiceSelect.value,
           rate: parseInt(rateSlider.value),
-          pitch: parseInt(pitchSlider.value)
+          pitch: parseInt(pitchSlider.value),
+          volume: parseInt(volumeSlider.value) / 100
         };
         
         tts.speak(textArea.value, options, function(audioData) {
           downloadBtn.disabled = false;
           
-          // Convert to WAV and download
-          const wavData = audioDataToWAV(audioData, 22050); // eSpeak-ng default sample rate
+          if (!audioData) {
+            showStatus('Failed to generate speech', 'error');
+            return;
+          }
+          
+          const wavData = audioDataToWAV(audioData);
           const blob = new Blob([wavData], { type: 'audio/wav' });
           const url = URL.createObjectURL(blob);
           
@@ -295,11 +283,11 @@
           a.click();
           
           URL.revokeObjectURL(url);
-          showStatus('WAV file downloaded!', 'success');
+          showStatus('Downloaded!', 'success');
         });
       };
 
-      // Initialize on page load
+      // Initialize
       initTTS();
     </script>
   </body>
