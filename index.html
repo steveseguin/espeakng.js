@@ -2,122 +2,204 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-    <title>espeakng.js 1.49.1 Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>eSpeak-ng.js CDN - Browser Text-to-Speech</title>
     <style>
-      h1 {
-        max-width: 480px;
-        margin: 2rem auto;
-        font-size: 150%;
-      }
-      form {
-        max-width: 480px;
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        max-width: 800px;
         margin: 0 auto;
-      }
-      .speecharg label {
-        display: inline-block;
-        width: 20%;
-      }
-      .speecharg input, .speecharg select {
-        display: inline-block;
-        width: calc(80% - 3rem);
-        margin: 0;
-      }
-      .speecharg input {
-        margin: 0;
-        padding: 0;
-        border: 0;
-      }
-      .speecharg button {
-        width: 1.5rem;
-        height: 1.5rem;
-        margin: 0 0 0 1.5rem;
-        display: inline-block;
-      }
-      .bottom {
-        margin-top: 1rem;
-        display: -webkit-flex;
-        display: flex;
-        -webkit-justify-content: space-between;
-        justify-content: space-between;
-        margin: 1rem 0;
-      }
-      .bottom button {
-        flex-grow: 1;
-        -webkit-flex-grow: 1;
-      }
-      #texttospeak {
-        width: 100%;
-        height: 8rem;
-        display: block;
-        margin-bottom: 1rem;
-      }
-      p.gh {
+        padding: 20px;
+        line-height: 1.6;
         color: #333;
-        text-align: right;
-        display: block;
-        font-style: italic;
       }
-
-      /* loading screen */
-      #splash {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #fff;
-        padding-top: 4rem;
-        transition: opacity 200ms ease, visibility 200ms;
-        -webkit-transition: opacity 200ms ease, visibility 200ms;
-        visibility: hidden;
-        opacity: 0;
+      h1 {
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
       }
-      body.loading #splash {
-        visibility: visible;
-        opacity: 1;
+      h2 {
+        color: #34495e;
+        margin-top: 30px;
       }
-      #splash > * {
-        width: 10rem;
-        max-width: 480px;
-        margin: 2rem auto;
-        display: block;
-        text-align: center;
+      .demo-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
       }
-      body.loading > *:not(#splash) {
-        visibility: hidden;
+      .info-box {
+        background: #e3f2fd;
+        padding: 15px;
+        border-left: 4px solid #2196f3;
+        margin: 15px 0;
       }
-
+      pre {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+      code {
+        background: #f4f4f4;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-family: "Consolas", "Monaco", monospace;
+      }
+      .buttons {
+        margin: 20px 0;
+      }
+      .buttons a {
+        display: inline-block;
+        padding: 10px 20px;
+        margin-right: 10px;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+      .buttons a:hover {
+        background: #2980b9;
+      }
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+      .feature {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+      }
+      .feature h3 {
+        margin-top: 0;
+        color: #495057;
+      }
     </style>
-    <script type="text/javascript" src="js/espeakng.js"></script>
-    <script type="text/javascript" src="js/demo.js"></script>
   </head>
-  <body class="loading">
-    <div id="splash">
-      <div>Loading eSpeak-ng worker and data...</div>
-      <progress></progress>
+  <body>
+    <h1>eSpeak-ng.js CDN</h1>
+    
+    <div class="info-box">
+      <strong>Client-side text-to-speech in any browser!</strong><br>
+      JavaScript port of eSpeak-ng via Emscripten. No server required - runs entirely in the browser using Web Workers and Web Audio API.
     </div>
-    <h1>espeakng.js 1.49.1 Demo</h1>
-    <form>
-      <textarea id="texttospeak">Call me Ishmael. Some years ago --- never mind how long precisely --- having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation.</textarea>
-      <div class="speecharg">
-        <label for="pitch">Pitch</label><input id="pitch" type="range" value="50" min="0" max="100" /><button type="button" aria-label="Reset pitch" title="Reset pitch" onclick="resetPitch();">&#x21b6;</button>
+
+    <div class="features">
+      <div class="feature">
+        <h3>🎯 Pure JavaScript</h3>
+        <p>No dependencies, no frameworks. Works with vanilla JS or any library.</p>
       </div>
-      <div class="speecharg">
-        <label for="rate">Rate</label><input id="rate" type="range" value="175" min="80" max="450" /><button type="button" aria-label="Reset rate" title="Reset rate" onclick="resetRate();">&#x21b6;</button>
+      <div class="feature">
+        <h3>🌍 100+ Languages</h3>
+        <p>Includes voices for over 100 languages and accents (3.2MB total).</p>
       </div>
-      <div class="speecharg">
-        <label for="voice">Voice</label><select id="voice"></select><button type="button" aria-label="Reset voice" title="Reset voice" onclick="resetVoice();">&#x21b6;</button>
+      <div class="feature">
+        <h3>⚡ Fast & Offline</h3>
+        <p>Runs locally in the browser. No API keys or network requests needed.</p>
       </div>
-      <div class="bottom">
-        <button type="button" onmousedown="speak();">Speak</button>
-        <button type="button" onmousedown="stop();">Stop</button>
+    </div>
+
+    <h2>Quick Start</h2>
+    
+    <h3>Option 1: Simple API (Recommended)</h3>
+    <pre><code>&lt;!-- Include the simple wrapper --&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng-simple.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+// Initialize TTS
+const tts = new SimpleTTS({
+  workerPath: 'https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng.worker.js'
+});
+
+// Wait for initialization
+tts.onReady(function() {
+  // Generate speech audio data
+  tts.speak('Hello world!', function(audioData) {
+    // audioData is a Float32Array - use your own audio player
+    playAudio(audioData);
+  });
+  
+  // With options
+  tts.speak('Hello world!', {
+    voice: 'en',
+    rate: 200,
+    pitch: 75
+  }, function(audioData) {
+    // Handle audio data
+  });
+});
+&lt;/script&gt;</code></pre>
+
+    <h3>Option 2: Original API</h3>
+    <pre><code>&lt;!-- Include the original library --&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng.min.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+const tts = new eSpeakNG('path/to/espeakng.worker.js', function() {
+  // Ready to use
+  tts.synthesize('Hello world!', function(samples, events) {
+    if (samples) {
+      // Handle audio chunks
+    }
+  });
+});
+&lt;/script&gt;</code></pre>
+
+    <h2>Required Files</h2>
+    <p>You need these files (served from same origin or with proper CORS headers):</p>
+    <ul>
+      <li><code>espeakng-simple.js</code> or <code>espeakng.min.js</code> - Main library</li>
+      <li><code>espeakng.worker.js</code> - Web Worker script</li>
+      <li><code>espeakng.worker.data</code> - Voice data (must be in same directory as worker)</li>
+    </ul>
+
+    <h2>CDN URLs</h2>
+    <pre><code># Latest version
+https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng-simple.js
+https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng.worker.js
+https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@latest/js/espeakng.worker.data
+
+# Specific version (1.49.1)
+https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@1.49.1/js/espeakng.min.js
+https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@1.49.1/js/espeakng.worker.js
+https://cdn.jsdelivr.net/gh/pettarin/espeakng.js-cdn@1.49.1/js/espeakng.worker.data</code></pre>
+
+    <div class="demo-section">
+      <h2>Live Demos</h2>
+      <div class="buttons">
+        <a href="simple-demo.html">Simple Demo</a>
+        <a href="demo.min.html">Original Demo</a>
       </div>
-      <p class="gh"><a href="https://github.com/eeejay/espeak/tree/emscripten">Original Code for eSpeak: Eitan Isaacson</a></p>
-      <p class="gh"><a href="https://github.com/pettarin/espeak-ng/tree/emscripten">Adapted Code for eSpeak-ng: Alberto Pettarin</a></p>
-    </form>
-    <script type="text/javascript">
-      initializeDemo();
-    </script>
+    </div>
+
+    <h2>API Reference</h2>
+    
+    <h3>SimpleTTS Methods</h3>
+    <ul>
+      <li><code>new SimpleTTS(options)</code> - Create instance</li>
+      <li><code>onReady(callback)</code> - Called when ready</li>
+      <li><code>getVoices(callback)</code> - Get available voices</li>
+      <li><code>speak(text, [options], callback)</code> - Generate speech
+        <ul>
+          <li><code>options.voice</code> - Voice identifier</li>
+          <li><code>options.rate</code> - Speech rate (80-450)</li>
+          <li><code>options.pitch</code> - Voice pitch (0-100)</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2>License</h2>
+    <p>GNU General Public License, Version 3 (GPLv3)</p>
+    
+    <h2>Links</h2>
+    <ul>
+      <li><a href="https://github.com/pettarin/espeakng.js-cdn">This CDN Repository</a></li>
+      <li><a href="https://github.com/espeak-ng/espeak-ng">eSpeak-ng Project</a></li>
+      <li><a href="https://github.com/espeak-ng/espeak-ng/tree/master/emscripten">Original JS Port</a></li>
+    </ul>
   </body>
 </html>

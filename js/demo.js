@@ -128,11 +128,22 @@ PushAudioNode.prototype.handleEvent = function(evt) {
 
 /* Code specific to the demo */
 
-var ctx = new (window.AudioContext || window.webkitAudioContext)();
+var ctx = null; // Initialize on first user interaction
 var tts;
 var pusher;
 var pusher_buffer_size = 4096;
 var chunkID = 0;
+
+// Initialize audio context on user interaction
+function initAudioContext() {
+  if (!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Chrome autoplay policy requires resume after user gesture
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+  }
+}
 
 function stop() {
   console.log('Inside stop()');
@@ -147,6 +158,9 @@ function stop() {
 
 function speak() {
   console.log('Inside speak()');
+  
+  // Initialize audio context on user interaction
+  initAudioContext();
 
   console.log('  Stopping...');
   stop();
