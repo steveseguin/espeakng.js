@@ -13,7 +13,7 @@
     this.defaultPitch = options.defaultPitch || 50;
     this.defaultVolume = options.defaultVolume || 1.0;
     this.enhanceAudio = options.enhanceAudio === true; // Disabled by default
-    this.sampleRate = 22050; // Will be updated from worker
+    this.sampleRate = 44100; // Default, will be updated from worker
     this.ready = false;
     this.readyCallbacks = [];
     this._initWorker();
@@ -115,7 +115,14 @@
     // Synthesize speech
     this._sendMessage('synthesize', [text], function(samples, events) {
       if (samples) {
-        audioChunks.push(new Float32Array(samples));
+        // The worker returns stereo data (each sample is duplicated)
+        // We need to extract just the mono channel
+        var stereoData = new Float32Array(samples);
+        var monoData = new Float32Array(stereoData.length / 2);
+        for (var i = 0; i < monoData.length; i++) {
+          monoData[i] = stereoData[i * 2];
+        }
+        audioChunks.push(monoData);
       } else {
         // Done - process audio
         var audioData = self._mergeAudioChunks(audioChunks);
