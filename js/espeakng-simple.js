@@ -13,6 +13,7 @@
     this.defaultPitch = options.defaultPitch || 50;
     this.defaultVolume = options.defaultVolume || 1.0;
     this.enhanceAudio = options.enhanceAudio === true; // Disabled by default
+    this.sampleRate = 22050; // Will be updated from worker
     this.ready = false;
     this.readyCallbacks = [];
     this._initWorker();
@@ -26,6 +27,12 @@
         if (e.data === 'ready') {
           self.ready = true;
           self.worker.onmessage = self._handleMessage.bind(self);
+          // Get the actual sample rate from the worker
+          self._sendMessage('get_samplerate', [], function(rate) {
+            if (rate) {
+              self.sampleRate = rate;
+            }
+          });
           self._executeReadyCallbacks();
         }
       };
@@ -73,6 +80,10 @@
     this._sendMessage('list_voices', [], callback);
   };
 
+  SimpleTTS.prototype.getSampleRate = function() {
+    return this.sampleRate;
+  };
+
   SimpleTTS.prototype.speak = function(text, options, callback) {
     if (typeof options === 'function') {
       callback = options;
@@ -117,7 +128,7 @@
         // Apply volume and normalization
         audioData = self._processAudio(audioData, volume);
         
-        callback(audioData);
+        callback(audioData, self.sampleRate);
       }
     });
   };
@@ -225,8 +236,6 @@
 
   // Utility function to create AudioBuffer
   SimpleTTS.createAudioBuffer = function(audioData, sampleRate) {
-    sampleRate = sampleRate || 22050;
-    
     if (!window.AudioContext && !window.webkitAudioContext) {
       console.error('AudioContext not supported');
       return null;
@@ -240,12 +249,19 @@
   };
 
   // Utility function to play audio data
-  SimpleTTS.playAudioData = function(audioData, options) {
-    options = options || {};
-    var sampleRate = options.sampleRate || 22050;
-    
+  SimpleTTS.playAudioData = function(audioData, sampleRate) {
     if (!window.AudioContext && !window.webkitAudioContext) {
       console.error('AudioContext not supported');
+      return null;
+    }
+    
+    // If sampleRate is an options object, extract it
+    if (typeof sampleRate === 'object' && sampleRate !== null) {
+      sampleRate = sampleRate.sampleRate;
+    }
+    
+    if (!sampleRate) {
+      console.error('Sample rate is required');
       return null;
     }
     

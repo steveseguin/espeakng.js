@@ -188,7 +188,7 @@
       }
 
       // Convert to WAV
-      function audioDataToWAV(audioData, sampleRate = 22050) {
+      function audioDataToWAV(audioData, sampleRate) {
         const length = audioData.length;
         const arrayBuffer = new ArrayBuffer(44 + length * 2);
         const view = new DataView(arrayBuffer);
@@ -235,7 +235,7 @@
           volume: parseInt(volumeSlider.value) / 100
         };
         
-        tts.speak(textArea.value, options, function(audioData) {
+        tts.speak(textArea.value, options, function(audioData, sampleRate) {
           speakBtn.disabled = false;
           
           if (!audioData) {
@@ -245,8 +245,8 @@
           
           showStatus('Playing...', 'success');
           
-          // Use built-in playback helper
-          const playback = SimpleTTS.playAudioData(audioData);
+          // Use built-in playback helper with correct sample rate
+          const playback = SimpleTTS.playAudioData(audioData, sampleRate);
           if (playback) {
             playback.source.onended = () => showStatus('Finished', 'success');
           }
@@ -265,7 +265,7 @@
           volume: parseInt(volumeSlider.value) / 100
         };
         
-        tts.speak(textArea.value, options, function(audioData) {
+        tts.speak(textArea.value, options, function(audioData, sampleRate) {
           downloadBtn.disabled = false;
           
           if (!audioData) {
@@ -273,7 +273,7 @@
             return;
           }
           
-          const wavData = audioDataToWAV(audioData);
+          const wavData = audioDataToWAV(audioData, sampleRate);
           const blob = new Blob([wavData], { type: 'audio/wav' });
           const url = URL.createObjectURL(blob);
           
