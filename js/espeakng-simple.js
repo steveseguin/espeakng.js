@@ -13,7 +13,7 @@
     this.defaultPitch = options.defaultPitch || 50;
     this.defaultVolume = options.defaultVolume || 1.0;
     this.enhanceAudio = options.enhanceAudio === true; // Disabled by default
-    this.sampleRate = 44100; // Default, will be updated from worker
+    this.sampleRate = 22050; // Default, will be updated from worker
     this.ready = false;
     this.readyCallbacks = [];
     this._initWorker();
@@ -31,6 +31,7 @@
           self._sendMessage('get_samplerate', [], function(rate) {
             if (rate) {
               self.sampleRate = rate;
+              console.log('Worker reported sample rate:', rate);
             }
           });
           self._executeReadyCallbacks();
@@ -135,7 +136,11 @@
         // Apply volume and normalization
         audioData = self._processAudio(audioData, volume);
         
-        callback(audioData, self.sampleRate);
+        // Force correct sample rate - the worker reports 22050 but audio seems to be 11025
+        var actualSampleRate = self.sampleRate / 2;
+        console.log('Using sample rate:', actualSampleRate, 'instead of reported:', self.sampleRate);
+        
+        callback(audioData, actualSampleRate);
       }
     });
   };

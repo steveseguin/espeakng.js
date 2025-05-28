@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>eSpeak-ng.js - Enhanced Browser Text-to-Speech</title>
+    <title>eSpeak-ng.js - Browser Text-to-Speech</title>
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -91,87 +91,87 @@
   <body>
     <h1>eSpeak-ng.js</h1>
     
-    <p><strong>Advanced browser text-to-speech with professional audio enhancement. No servers, no APIs, just JavaScript.</strong></p>
+    <p><strong>Browser-based text-to-speech using eSpeak-ng. No servers, no APIs, pure JavaScript.</strong></p>
 
     <div class="features">
       <div class="feature">
         <h3>🎯 Pure JavaScript</h3>
-        <p>Vanilla JS, no dependencies</p>
+        <p>No frameworks needed</p>
       </div>
       <div class="feature">
-        <h3>🔊 Studio Quality</h3>
-        <p>Professional audio processing</p>
+        <h3>🔊 Clear Speech</h3>
+        <p>eSpeak-ng synthesis</p>
       </div>
       <div class="feature">
         <h3>🌍 100+ Languages</h3>
-        <p>en-us default voice</p>
+        <p>All voices included</p>
       </div>
       <div class="feature">
         <h3>⚡ Runs Offline</h3>
-        <p>Everything in browser</p>
+        <p>No server required</p>
       </div>
     </div>
 
     <div class="enhancement-list">
-      <h3>🎚️ Advanced Audio Enhancement (Default On)</h3>
+      <h3>📦 What's Included</h3>
       <ul>
-        <li><strong>Pre-emphasis Filter</strong> - Boosts speech clarity</li>
-        <li><strong>Noise Gate</strong> - Removes background noise</li>
-        <li><strong>Spectral Enhancement</strong> - Richer, fuller sound</li>
-        <li><strong>De-esser</strong> - Reduces harsh 's' sounds</li>
-        <li><strong>Dynamic Compression</strong> - Consistent volume levels</li>
-        <li><strong>Intelligent Normalization</strong> - Optimal loudness</li>
+        <li><strong>eSpeak-ng Engine</strong> - Complete TTS synthesizer</li>
+        <li><strong>Simple API</strong> - Easy-to-use JavaScript wrapper</li>
+        <li><strong>All Voice Data</strong> - 100+ languages and variants</li>
+        <li><strong>Audio Playback</strong> - Built-in Web Audio helpers</li>
+        <li><strong>Basic Enhancement</strong> - Optional high-frequency boost</li>
       </ul>
     </div>
 
     <h2>Quick Start</h2>
-    <pre><code>// Enhanced audio by default
+    <pre><code>// Initialize TTS
 const tts = new SimpleTTS();
 
-// Speak with studio-quality audio
+// Generate and play speech
 tts.onReady(() => {
-  tts.speak('Hello world!', audioData => {
-    SimpleTTS.playAudioData(audioData);
+  tts.speak('Hello world!', (audioData, sampleRate) => {
+    SimpleTTS.playAudioData(audioData, sampleRate);
   });
 });</code></pre>
 
     <div class="highlight">
-      <strong>New:</strong> Professional audio enhancement pipeline delivers clearer, more natural speech!
+      <strong>Simple & Effective:</strong> Get started with text-to-speech in minutes!
     </div>
 
     <div class="demo-buttons">
       <a href="simple-demo.html">Try Demo</a>
-      <a href="compare-demo.html" class="secondary">Compare Audio Quality</a>
+      <a href="compare-demo.html" class="secondary">Audio Options</a>
       <a href="https://github.com/steveseguin/espeakng.js-cdn">View on GitHub</a>
     </div>
 
     <h2>Advanced Usage</h2>
-    <pre><code>// Control enhancement
+    <pre><code>// Speak with options
 tts.speak('Hello world!', {
-  voice: 'en-us',     // Voice ID
+  voice: 'en',        // Voice ID
   rate: 200,          // Speed (80-450)
   pitch: 75,          // Pitch (0-100)
-  volume: 1.2,        // Volume (0-2.0)
-  enhance: true       // Audio enhancement (default: true)
-}, audioData => {
-  // Play with optional reverb
-  SimpleTTS.playAudioData(audioData, {
-    reverb: true      // Add warmth
+  volume: 1.2         // Volume (0-2.0)
+}, (audioData, sampleRate) => {
+  SimpleTTS.playAudioData(audioData, sampleRate);
+});
+
+// List available voices
+tts.getVoices(voices => {
+  console.log(voices);
+});</code></pre>
+
+    <h2>Using the Original API</h2>
+    <pre><code>// Direct eSpeak-ng access
+const espeak = new eSpeakNG('js/espeakng.worker.js', () => {
+  espeak.set_voice('en');
+  espeak.synthesize('Hello', (samples, events) => {
+    // Raw PCM samples
   });
 });</code></pre>
 
-    <h2>Disable Enhancement (Raw Audio)</h2>
-    <pre><code>// For raw eSpeak-ng output
-const tts = new SimpleTTS({
-  enhanceAudio: false
-});
-
-// Or per-request
-tts.speak('Hello', { enhance: false }, callback);</code></pre>
-
     <h2>Files Needed</h2>
     <ol>
-      <li><code>espeakng-simple.js</code> - Enhanced API with audio processing</li>
+      <li><code>espeakng-simple.js</code> - Simple wrapper API</li>
       <li><code>espeakng.worker.js</code> - Web Worker</li>
       <li><code>espeakng.worker.data</code> - Voice data</li>
     </ol>
