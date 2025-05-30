@@ -116,14 +116,9 @@
     // Synthesize speech
     this._sendMessage('synthesize', [text], function(samples, events) {
       if (samples) {
-        // The worker returns stereo data (each sample is duplicated)
-        // We need to extract just the mono channel
-        var stereoData = new Float32Array(samples);
-        var monoData = new Float32Array(stereoData.length / 2);
-        for (var i = 0; i < monoData.length; i++) {
-          monoData[i] = stereoData[i * 2];
-        }
-        audioChunks.push(monoData);
+        // Convert samples to Float32Array
+        var audioData = new Float32Array(samples);
+        audioChunks.push(audioData);
       } else {
         // Done - process audio
         var audioData = self._mergeAudioChunks(audioChunks);
@@ -136,11 +131,8 @@
         // Apply volume and normalization
         audioData = self._processAudio(audioData, volume);
         
-        // Force correct sample rate - the worker reports 22050 but audio seems to be 11025
-        var actualSampleRate = self.sampleRate / 2;
-        console.log('Using sample rate:', actualSampleRate, 'instead of reported:', self.sampleRate);
-        
-        callback(audioData, actualSampleRate);
+        // Use the sample rate as reported by the worker
+        callback(audioData, self.sampleRate);
       }
     });
   };
