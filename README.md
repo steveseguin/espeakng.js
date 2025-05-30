@@ -43,11 +43,6 @@ Or use the minified version:
 1. `espeakng.min.js` - Minified API
 2. `espeakng.worker.js` and `espeakng.worker.data`
 
-CDN usage:
-```html
-<script src="https://cdn.jsdelivr.net/gh/steveseguin/espeakng.js-cdn@latest/js/espeakng-simple.js"></script>
-```
-
 ## API
 
 ### new SimpleTTS(options)
