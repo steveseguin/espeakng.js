@@ -266,7 +266,7 @@
         standardBtn.disabled = true;
         enhancedBtn.disabled = true;
 
-        tts.speak(textArea.value, options, (audioData) => {
+        tts.speak(textArea.value, options, (audioData, sampleRate) => {
           if (!audioData) {
             status.textContent = 'Failed to generate speech';
             standardBtn.disabled = false;
@@ -274,9 +274,7 @@
             return;
           }
 
-          const playback = SimpleTTS.playAudioData(audioData, {
-            reverb: enhance // Add subtle reverb to enhanced version
-          });
+          const playback = SimpleTTS.playAudioData(audioData, sampleRate);
 
           if (playback) {
             playback.source.onended = () => {
